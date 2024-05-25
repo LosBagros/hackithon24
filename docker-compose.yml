@@ -19,7 +19,6 @@ services:
   hackapi:
     build:
       context: hackapi
-      dockerfile: Dockerfile
     depends_on:
       - db
     ports:
@@ -41,7 +40,6 @@ services:
   frontend:
     build:
       context: frontend
-      dockerfile: Dockerfile
     ports:
-      - 5173:5173
+      - 4173:4173
     restart: unless-stopped
