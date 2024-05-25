@@ -7,8 +7,8 @@ services:
       - 8800:3306
     volumes:
       - ./mariadb_data:/var/lib/mysql
-    environment:
-      MARIADB_ROOT_PASSWORD: superTajnyHeslo
+    env_file:
+      - .env
 
   adminer:
     image: adminer
@@ -16,10 +16,32 @@ services:
     ports:
       - 8801:8080
 
-  scraper:
+  hackapi:
+    build:
+      context: hackapi
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - 8802:8000
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  websocket:
     build: .
     depends_on:
       - db
     env_file:
       - .env
+    ports:
+      - 8765:8765
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
     restart: unless-stopped

@@ -5,23 +5,12 @@ import paho.mqtt.client as mqtt
 import os
 import ssl
 from dotenv import load_dotenv
-from datetime import datetime
 
 
 # Global list of connected WebSocket clients
 websocket_clients = []
 
 load_dotenv()
-
-# Database connection setup
-maria_user = os.getenv("maria_user")
-maria_password = os.getenv("maria_password")
-db_host = os.getenv("db_host")
-db_port = os.getenv("db_port")
-database = os.getenv("database")
-
-DATABASE_URL = f"""mysql+pymysql://{maria_user}:{
-    maria_password}@{db_host}:{db_port}/{database}"""
 
 
 def on_connect(client, userdata, flags, rc):
@@ -108,8 +97,8 @@ async def main():
 def start_mqtt_client():
     broker_address = "mqtt.portabo.cz"
     port = 8883
-    mqtt_user = os.getenv("mqtt_user")
-    mqtt_password = os.getenv("mqtt_password")
+    mqtt_user = os.getenv("MQTT_USERNAME")
+    mqtt_password = os.getenv("MQTT_PASSWORD")
 
     client = mqtt.Client()
     client.username_pw_set(mqtt_user, mqtt_password)
