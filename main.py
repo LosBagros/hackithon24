@@ -5,12 +5,16 @@ import paho.mqtt.client as mqtt
 import os
 import ssl
 from dotenv import load_dotenv
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 # Global list of connected WebSocket clients
 websocket_clients = []
 
 load_dotenv()
+
+messages = 0
+troughput = 0
 
 
 def on_connect(client, userdata, flags, rc):
@@ -19,6 +23,9 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
+    global messages, troughput
+    messages += 1
+    troughput += len(msg.payload)
     if "ttndata" in msg.topic or "Bilina" in msg.topic or "vodomery/decin" in msg.topic:
         msg.payload = msg.payload.decode()
         coordinates = extract_gateway_coordinates(msg.payload, msg.topic)
@@ -33,6 +40,21 @@ async def send_to_websockets(message):
         await asyncio.wait(tasks)
 
 # WebSocket handling
+
+
+def every_second():
+    global messages, troughput
+    print(f"Zprav za sekundu: {messages}, Datovy tok: {troughput} B/s")
+
+    asyncio.run(send_to_websockets(json.dumps(
+        {"messages": messages, "troughput": troughput})))
+    messages = 0
+    troughput = 0
+
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(every_second, 'interval', seconds=1)
+scheduler.start()
 
 
 def extract_gateway_coordinates(json_message, topic):
