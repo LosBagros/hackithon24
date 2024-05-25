@@ -12,11 +12,12 @@ spusteni bude pain
 
 ## Jak to spustit
 
-1. git clone https://github.com/losbagros/hackithon24
-2. cd hackithon24
-3. git clone https://github.com/lagemaxl/hackithon2024 frontend
-4. git clone https://github.com/VojtechRiedl/hackapi
-5. docker-compose up -d
+1. `git clone https://github.com/losbagros/hackithon24`
+2. `cd hackithon24`
+3. `git clone https://github.com/lagemaxl/hackithon2024 frontend`
+4. `git clone https://github.com/VojtechRiedl/hackapi`
+5. `cp .env.example .env - nastavit promenne v .env`
+6. `docker compose up -d`
 
 ## Reverse proxy
 
