@@ -1,3 +1,4 @@
+import random
 import json
 import asyncio
 import websockets
@@ -15,6 +16,28 @@ load_dotenv()
 
 messages = 0
 troughput = 0
+
+
+fakedata = [
+    {"name": "Roudnice", "latitude": 50.422, "longitude": 14.259},
+    {"name": "Litomerice", "latitude": 50.533, "longitude": 14.131},
+    {"name": "Chomutov", "latitude": 50.460, "longitude": 13.417},
+    {"name": "Teplice", "latitude": 50.640, "longitude": 13.824},
+    {"name": "Chlumec", "latitude": 50.425, "longitude": 15.547},
+    {"name": "Decin", "latitude": 50.7783, "longitude": 14.2083},
+    {"name": "Bilina", "latitude": 50.545, "longitude": 13.775},
+    {"name": "Dolni Zleb", "latitude": 50.666, "longitude": 14.033},
+    {"name": "Kadan", "latitude": 50.383, "longitude": 13.270},
+    {"name": "Klasterec nad Ohri", "latitude": 50.387, "longitude": 13.171},
+    {"name": "Krupka", "latitude": 50.656, "longitude": 13.864},
+    {"name": "Louny", "latitude": 50.356, "longitude": 13.796},
+    {"name": "Lovosice", "latitude": 50.517, "longitude": 14.052},
+    {"name": "Melnik", "latitude": 50.350, "longitude": 14.474},
+    {"name": "Most", "latitude": 50.503, "longitude": 13.636},
+    {"name": "Rumburk", "latitude": 50.952, "longitude": 14.537},
+    {"name": "Varnsdorf", "latitude": 50.911, "longitude": 14.619},
+    {"name": "Litvinov", "latitude": 50.606, "longitude": 13.618},
+]
 
 
 def on_connect(client, userdata, flags, rc):
@@ -52,8 +75,17 @@ def every_second():
     troughput = 0
 
 
+def faker():
+    global fakedata
+    asyncio.run(send_to_websockets(json.dumps(random.choice(fakedata))))
+    asyncio.run(send_to_websockets(json.dumps(random.choice(fakedata))))
+    asyncio.run(send_to_websockets(json.dumps(random.choice(fakedata))))
+    asyncio.run(send_to_websockets(json.dumps(random.choice(fakedata))))
+
+
 scheduler = BackgroundScheduler()
 scheduler.add_job(every_second, 'interval', seconds=1)
+scheduler.add_job(faker, 'interval', seconds=1)
 scheduler.start()
 
 
