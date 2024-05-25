@@ -26,13 +26,14 @@ DATABASE_URL = f"""mysql+pymysql://{maria_user}:{
 
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
-    client.subscribe("/ttndata/#")
+    client.subscribe("#")
 
 
 def on_message(client, userdata, msg):
-    msg.payload = msg.payload.decode()
-    coordinates = extract_gateway_coordinates(msg.payload, msg.topic)
-    asyncio.run(send_to_websockets(str(coordinates)))
+    if "ttndata" in msg.topic or "Bilina" in msg.topic or "vodomery/decin" in msg.topic:
+        msg.payload = msg.payload.decode()
+        coordinates = extract_gateway_coordinates(msg.payload, msg.topic)
+        asyncio.run(send_to_websockets(json.dumps(coordinates)))
 
 
 async def send_to_websockets(message):
@@ -62,20 +63,20 @@ def extract_gateway_coordinates(json_message, topic):
 
                 elif gateway_id:
                     gateway_coordinates["name"] = gateway_id
-                    gateway_coordinates["latitude"] = "50.673119610684594", 
-                    gateway_coordinates["longitude"] = "14.049129474739555"
+                    gateway_coordinates["latitude"] = 50.673119610684594
+                    gateway_coordinates["longitude"] = 14.049129474739555
                 elif location:
                     gateway_coordinates["name"] = "unknown"
                     gateway_coordinates["latitude"] = location['latitude']
                     gateway_coordinates["longitude"] = location['longitude']
         elif topic == "/vodomery/decin":
             gateway_coordinates["name"] = "vodomery/decin"
-            gateway_coordinates["latitude"] = "50.7783"
-            gateway_coordinates["longitude"] = "14.2083"
+            gateway_coordinates["latitude"] = 50.7783
+            gateway_coordinates["longitude"] = 14.2083
         elif "/Bilina/" in topic:
             gateway_coordinates["name"] = "Bilina"
-            gateway_coordinates["latitude"] = "50.545"
-            gateway_coordinates["longitude"] = "13.775"
+            gateway_coordinates["latitude"] = 50.545
+            gateway_coordinates["longitude"] = 13.775
         else:
             return
 
@@ -109,7 +110,6 @@ def start_mqtt_client():
     port = 8883
     mqtt_user = os.getenv("mqtt_user")
     mqtt_password = os.getenv("mqtt_password")
-    print(mqtt_user, mqtt_password)
 
     client = mqtt.Client()
     client.username_pw_set(mqtt_user, mqtt_password)
