@@ -1,6 +1,11 @@
+APScheduler==3.10.4
 greenlet==3.0.3
 paho-mqtt==2.1.0
 PyMySQL==1.1.1
 python-dotenv==1.0.1
+pytz==2024.1
+six==1.16.0
 SQLAlchemy==2.0.30
 typing_extensions==4.12.0
+tzlocal==5.2
+websockets==12.0
